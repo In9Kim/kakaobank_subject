@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.example.kakaobank_subject.mapper.CreditHistoryMapper">
+    <select id="getHistory" resultType="int">
+        select count(*)
+        from CUSTOMER_LOAN_BEFORE
+        where CUSTOMER_PK = #{VS_CUSTOMER_PK}
+    </select>
+    <update id="setHistory_U" parameterType="hashmap">
+        UPDATE CUSTOMER_LOAN_BEFORE
+          SET USE_FLAG = '3'
+             ,UPDATE_BY = 'ONLINE'
+             ,UPDATE_DATE = SYSDATE
+        WHERE CUSTOMER_PK = #{customer_pk}
+          AND USE_FLAG = '1'
+    </update>
+    <insert id="setHistory_I" parameterType="hashmap">
+        INSERT INTO CUSTOMER_LOAN_BEFORE( CUSTOMER_LOAN_BEFORE_PK
+        ,CUSTOMER_PK
+        ,LOAN_LIMIT
+        ,LOAN_RATE
+        ,USE_FLAG
+        ,CREATE_BY
+        ,CREATE_DATE
+        )
+        VALUES( CUSTOMER_LOAN_BEFORE_SEQ.NEXTVAL
+        ,#{customer_pk}
+        ,#{credit_Limit}
+        ,#{credit_Rate}
+        ,'1'
+        ,'ONLINE'
+        ,SYSDATE
+        )
+    </insert>
+</mapper>

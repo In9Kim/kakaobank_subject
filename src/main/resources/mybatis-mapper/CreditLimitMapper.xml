@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.example.kakaobank_subject.mapper.CreditLimitMapper">
+    <select id="getLimit" resultType="int">
+        --대출한도 조회 가정
+        --1. 전 금융권에 대출이 하나도 없다고 가정하자
+        --2. 대출한도는 신용등급에 따라 70%~100%로 줄수 있다.(8~9등급은 70%,5~7등급은80%,3~4등급은90%, 1~2등급은 100%)
+        --3. input은 연간소득만 받고, 신용등급은 1등급이라고 가정하자(원래는 신정원을 통해 조회해와야함)
+        -- ex)연간소득 6500만원, 신용등급 1등급인 경우, output: 6500, 1.7% + 3% = 4.7%의 비율로 대출 진행 가능
+        SELECT SUM(sr.RATE) tot_rate
+        FROM STANDARD_RATE sr
+        ,LOAN_PRODUCT lp
+        ,RATE_CODE_TABLE rct
+        WHERE sr.USE_FLAG = '1'
+        AND lp.USE_FLAG = '1'
+        AND RCT.RATE_CODE IN ('2001', #{VS_IN_KAKAO})
+        AND sr.PRODUCT_CODE = lp.PRODUCT_CODE
+        AND sr.RATE_CODE = rct.RATE_CODE
+    </select>
+</mapper>
